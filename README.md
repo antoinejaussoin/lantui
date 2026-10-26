@@ -6,8 +6,36 @@ with IPv4/IPv6, MAC, hostname, ping, vendor, DNS, mDNS, and SMB names.
 ## Install
 
 ```bash
+curl -fsSL https://raw.githubusercontent.com/antoinejaussoin/lantui/main/install.sh | sh
+```
+
+That downloads the matching Mac or Linux binary from GitHub Releases into
+`~/.local/bin`. Override with `LANTUI_BINDIR`, `LANTUI_VERSION`
+(`latest`, `nightly`, or a tag like `v0.1.0`), or `LANTUI_REPO`.
+
+From source:
+
+```bash
 cargo install --path .
 ```
+
+## Cross-build
+
+From macOS, with [rustup](https://rustup.rs/) and [zig](https://ziglang.org/) (`brew install zig`):
+
+```bash
+make
+```
+
+That writes three release binaries to `dist/`:
+
+| File | Target |
+| --- | --- |
+| `lantui-macos-arm64` | Apple Silicon |
+| `lantui-linux-x64` | Linux x86_64 (glibc 2.17+) |
+| `lantui-linux-arm64` | Linux aarch64 (glibc 2.17+) |
+
+Linux hosts skip the Mac target: `make linux`. Individual targets: `make macos`, `make linux-x64`, `make linux-arm64`.
 
 ## Usage
 

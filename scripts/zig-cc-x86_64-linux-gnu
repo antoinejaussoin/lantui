@@ -1,0 +1,2 @@
+#!/bin/sh
+exec "$(dirname "$0")/zig-cc" x86_64-linux-gnu.2.17 "$@"
