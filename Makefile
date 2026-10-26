@@ -12,12 +12,15 @@ HOST_OS     := $(shell uname -s)
 # Keep cross artifacts out of ./target so a `sudo cargo run` lock cannot block `make`.
 export CARGO_TARGET_DIR := $(CURDIR)/.cross-target
 
+# Zig is only needed when cross-compiling Linux from macOS.
+ifeq ($(HOST_OS),Darwin)
 export CC_x86_64_unknown_linux_gnu   := $(CURDIR)/scripts/zig-cc-x86_64-linux-gnu
 export CXX_x86_64_unknown_linux_gnu  := $(CURDIR)/scripts/zig-cc-x86_64-linux-gnu
 export CARGO_TARGET_X86_64_UNKNOWN_LINUX_GNU_LINKER := $(CURDIR)/scripts/zig-cc-x86_64-linux-gnu
 export CC_aarch64_unknown_linux_gnu  := $(CURDIR)/scripts/zig-cc-aarch64-linux-gnu
 export CXX_aarch64_unknown_linux_gnu := $(CURDIR)/scripts/zig-cc-aarch64-linux-gnu
 export CARGO_TARGET_AARCH64_UNKNOWN_LINUX_GNU_LINKER := $(CURDIR)/scripts/zig-cc-aarch64-linux-gnu
+endif
 
 .PHONY: all dist macos linux linux-x64 linux-arm64 setup clean help
 
@@ -43,8 +46,10 @@ endif
 
 setup:
 	@command -v rustup >/dev/null || { echo "rustup is required"; exit 1; }
-	@command -v zig >/dev/null || { echo "zig is required (brew install zig)"; exit 1; }
+ifeq ($(HOST_OS),Darwin)
+	@command -v zig >/dev/null || { echo "zig is required on macOS (brew install zig)"; exit 1; }
 	@chmod +x scripts/zig-cc scripts/zig-cc-x86_64-linux-gnu scripts/zig-cc-aarch64-linux-gnu
+endif
 	rustup target add $(MAC_TRIPLE) $(LIN_X64) $(LIN_ARM64)
 
 macos:
